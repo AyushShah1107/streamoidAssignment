@@ -1,14 +1,17 @@
 import fs from "fs";
 import path from "path";
 import multer from "multer";
+import csv from "csv-parser";
 
-// Ensure uploads folder exists before anything
-const uploadDir = "uploads";
+// Get absolute path for the uploads folder
+const uploadDir = path.join(process.cwd(), "uploads");
+
+// Ensure the folder exists before Multer runs
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configure storage
+// Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -19,7 +22,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filter only CSV files
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === "text/csv" || file.originalname.endsWith(".csv")) {
     cb(null, true);
@@ -37,13 +39,37 @@ const uploadData = (req, res) => {
       return res.status(400).json({ message: "No file uploaded!" });
     }
 
-    res.json({
-      message: "File uploaded successfully!",
-      file: req.file,
-    });
+    const filePath = req.file.path;
+    const results = [];
+    const missingRows = [];
+    const requiredFields = ["Name", "Price", "Index"];
+
+    console.log("Reading file from:", filePath);
+
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("data", (row) => {
+        results.push(row);
+        const hasMissing = requiredFields.some(
+          (key) => !row[key] || row[key].trim() === "" || row[key].toLowerCase() === "null"
+        );
+        if (hasMissing) missingRows.push(row);
+      })
+      .on("end", () => {
+        res.json({
+          message: "CSV uploaded and checked successfully!",
+          totalRows: results.length,
+          missingCount: missingRows.length,
+          missingRows,
+        });
+      })
+      .on("error", (err) => {
+        console.error("Error reading file:", err);
+        res.status(500).json({ message: "Error reading file", error: err.message });
+      });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
