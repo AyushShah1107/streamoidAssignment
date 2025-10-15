@@ -81,7 +81,7 @@ const uploadData = async (req, res) => {
         try {
           if (validRows.length > 0) {
             const docs = validRows.map((row) => ({
-              Index: Number(row.Index),
+              sku: Number(row.Index),
               Name: row.Name,
               Description: row.Description || "",
               Brand: row.Brand || "",
