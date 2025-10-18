@@ -5,20 +5,16 @@ import csv from "csv-parser";
 import { fileURLToPath } from "url";
 import { Product } from "../models/product.model.js";
 
-// ✅ Resolve current directory (works in ES Modules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Create absolute, safe upload path (outside OneDrive issues)
 const uploadDir = path.join(__dirname, "..", "uploads");
 
-// ✅ Ensure uploads folder exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); 
-  console.log("📁 Created uploads folder at:", uploadDir);
+  console.log("Created uploads folder at:", uploadDir);
 }
 
-// ✅ Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
@@ -37,7 +33,6 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-// ✅ Controller
 const uploadData = async (req, res) => {
   try {
     if (!req.file) {
@@ -45,8 +40,8 @@ const uploadData = async (req, res) => {
     }
 
     const filePath = req.file.path;
-    console.log("🗂 File uploaded to:", filePath);
-    console.log("📂 Exists?", fs.existsSync(filePath));
+    console.log("File uploaded to:", filePath);
+    console.log("Exists?", fs.existsSync(filePath));
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ message: "Uploaded file not found on server" });
@@ -76,7 +71,7 @@ const uploadData = async (req, res) => {
         results.push(cleanedRow);
       })
       .on("end", async () => {
-        console.log(`✅ Parsed ${results.length} rows. Valid: ${validRows.length}`);
+        console.log(`Parsed ${results.length} rows. Valid: ${validRows.length}`);
 
         try {
           if (validRows.length > 0) {
@@ -100,32 +95,31 @@ const uploadData = async (req, res) => {
           }
 
           res.json({
-            message: "✅ CSV processed successfully!",
+            message: "CSV processed successfully!",
             totalRows: results.length,
             savedCount: validRows.length,
             missingCount: missingRows.length,
             missingRows,
           });
         } catch (dbError) {
-          console.error("❌ Database Error:", dbError);
+          console.error("Database Error:", dbError);
           res.status(500).json({
             message: "Error saving data to database",
             error: dbError.message,
           });
         } finally {
-          // ✅ Optional cleanup
           fs.unlink(filePath, (err) => {
             if (err) console.error("Error deleting file:", err);
-            else console.log("🧹 Deleted uploaded file:", filePath);
+            else console.log("Deleted uploaded file:", filePath);
           });
         }
       })
       .on("error", (err) => {
-        console.error("❌ CSV Read Error:", err);
+        console.error("CSV Read Error:", err);
         res.status(500).json({ message: "Error reading file", error: err.message });
       });
   } catch (error) {
-    console.error("❌ Server Error:", error);
+    console.error("Server Error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
