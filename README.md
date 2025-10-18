@@ -6,20 +6,20 @@ This API is designed to manage products, allowing users to upload data via CSV, 
 
 ## Table of Contents
 
-- [Features](#features)
-- [Technologies](#technologies)
-- [API Documentation](#api-documentation)
-  - [1. Get Products](#1-get-products)
-  - [2. Search Products](#2-search-products)
-  - [3. Upload Products Data](#3-upload-products-data)
-- [Setup and Installation](#setup-and-installation)
-  - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Environment Setup](#2-environment-setup)
-  - [3. Install Dependencies](#3-install-dependencies)
-  - [4. Run the Application](#4-run-the-application)
-- [Testing](#testing)
-  - [1. Unit Testing](#1-unit-testing)
-  - [2. API Testing](#2-api-testing)
+- Features
+- Technologies
+- API Documentation
+  - 1. Get Products
+  - 2. Search Products
+  - 3. Upload Products Data
+- Setup and Installation
+  - 1. Clone the Repository
+  - 2. Environment Setup
+  - 3. Install Dependencies
+  - 4. Run the Application
+- Testing
+  - 1. Unit Testing
+  - 2. API Testing
 
 ---
 
@@ -55,7 +55,7 @@ Retrieve a list of all products in the database.
 ```bash
 GET /api/v1/products
 ```
-### Response
+#### Response
 
 ```json
 {
@@ -133,7 +133,7 @@ GET /api/v1/products/search?brand=Brand%20A&minPrice=50&maxPrice=200
 
 - `file` (CSV file)
 
-## Sample CSV Format
+#### Sample CSV Format
 
 ```csv
 Name,Price,Index,Brand,Category,Stock,Color,Size,Availability
@@ -141,13 +141,13 @@ Product 1,100,123,Brand A,Category X,10,Red,M,in_stock
 Product 2,150,124,Brand B,Category Y,5,Blue,L,out_of_stock
 ```
 
-## Request Example (curl)
+#### Request Example (curl)
 
 ```bash
 curl -X POST http://localhost:4000/api/v1/upload -F "file=@/path/to/products.csv"
 ```
 
-## Response (200 OK)
+#### Response (200 OK)
 
 ```json
 {
@@ -170,7 +170,7 @@ cd product-management-api
 
 Replace your-username and repo name accordingly.
 
-## Environment Setup
+### Environment Setup
 
 Create a `.env` file in the root directory with the following content:
 
@@ -181,13 +181,13 @@ PORT=4000
 - Replace your-db-name with your MongoDB database name.
 - Ensure MongoDB server is running locally or use a hosted MongoDB service.
 
-## Install Dependencies
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-## Run the Application
+### Run the Application
 
 ```bash
 npm start
@@ -242,6 +242,13 @@ curl -X GET "http://localhost:4000/api/v1/products/search?brand=Brand%20A&minPri
 ```bash
 curl -X POST http://localhost:4000/api/v1/upload -F "file=@/path/to/products.csv"
 ```
+
+## Notes
+
+- CSV upload expects mandatory fields: `Name`, `Price`, and `Index`.
+- Invalid rows in CSV (missing required fields) will be reported and skipped.
+- Uploaded CSV files are deleted after processing.
+- CORS enabled for cross-origin requests.
 
 
 
