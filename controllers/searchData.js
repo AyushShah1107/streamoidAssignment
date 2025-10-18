@@ -1,11 +1,9 @@
-// controllers/productController.js
 import { Product } from "../models/product.model.js";
 
  const searchProduct = async (req, res) => {
   try {
     const { brand, color, minPrice, maxPrice, category } = req.query;
 
-    // Build a dynamic query object
     const filter = {};
 
     if (brand) filter.Brand = brand;
@@ -17,7 +15,6 @@ import { Product } from "../models/product.model.js";
       if (maxPrice) filter.Price.$lte = Number(maxPrice);
     }
 
-    // Fetch results
     const products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {

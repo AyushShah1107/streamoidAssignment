@@ -52,11 +52,10 @@ const productSchema = new mongoose.Schema({
   },
   InternalID: {
     type: String,
-    alias: "Internal ID", // allow reading/writing as 'Internal ID' too
+    alias: "Internal ID", 
   },
 }, { timestamps: true });
 
-// Optional index for faster queries
 productSchema.index({ Brand: 1, Category: 1 });
 
 const Product = mongoose.model("Product", productSchema);

@@ -52,7 +52,7 @@ const uploadData = async (req, res) => {
     const missingRows = [];
     const requiredFields = ["Name", "Price", "Index"];
 
-    console.log("🔍 Reading and parsing CSV...");
+    console.log("Reading and parsing CSV...");
 
     fs.createReadStream(filePath)
       .pipe(csv())
